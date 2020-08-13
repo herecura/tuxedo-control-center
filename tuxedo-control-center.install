@@ -1,14 +1,9 @@
 post_install() {
-  systemctl daemon-reload
-  systemctl enable --now tccd
-  systemctl enable --now tccd-sleep
-}
+cat <<-NOTE
+To use the Tuxedo Control Center enable tccd and tccd-sleep with the
+following commands:
 
-post_upgrade() {
-  post_install
-}
-
-pre_remove() {
-  systemctl disable tccd
-  systemctl disable tccd-sleep
+systemctl enable --now tccd.service
+systemctl enable --now tccd-sleep.service
+NOTE
 }

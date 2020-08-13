@@ -11,26 +11,39 @@ pkgdesc="An application helping you to tune your TUXEDO"
 arch=(x86_64)
 url="https://github.com/tuxedocomputers/tuxedo-control-center"
 license=('GPL')
-depends=('tuxedo-cc-wmi' 'libxss')
+#depends=(alsa-lib hicolor-icon-theme libxcursor libxss libxtst nss tuxedo-cc-wmi)
+depends=()
 options=(!strip)
 install=${pkgname}.install
 
-source=(https://rpm.tuxedocomputers.com/opensuse/15.2/x86_64/tuxedo-control-center_${pkgver}.rpm tuxedo-control-center.install)
-sha256sums=('b1535c7cdcfaaaa6c0c1891d7e71b0c33c33143535b9e4abd40558641444f141'
-            'fef8f708ff4ba19921f167ff9bffd2536cc0c128dfe418a30f7e5e0d04fca6e3')
+source=("https://rpm.tuxedocomputers.com/opensuse/15.2/x86_64/${pkgname}_${pkgver}.rpm"
+        tuxedo-control-center.install)
 sha512sums=('cc76fe1b65f8b8bd8c43352cd64400c635e7b8db0fd07b71fff6caef690d9c3f415350cba5dbdab14c8dca5aadf045d458ab399bc58cb070b0ee2d11563252c0'
-            'b70d3412f07c72d6de2cf18e75a184741d8f5db7f144c4d8e8c0dde752e197d831fc8f8b6c095c9b6387ff97b36567f9cf5167dbb23ebc392f7b3cc47a78111a')
+            '944637c5818e9aa88840dcde3171df5ce0c58c15927dc800b3481f13ab0a20aaf629d6538e16b752cf97f8a716921a99adb7058a262ce87096089eb2e96cde62')
 
 package() {
-  cp -av usr "${pkgdir}"
-  cp -av opt "${pkgdir}"
-  chmod -R 755 "${pkgdir}"/opt/tuxedo-control-center/
-  mkdir -p "${pkgdir}/usr/bin"
-  ln -sfv /opt/tuxedo-control-center/tuxedo-control-center "${pkgdir}/usr/bin/tuxedo-control-center"
-  install -Dm644 "${srcdir}/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/tuxedo-control-center.desktop" "${pkgdir}/usr/share/applications/tuxedo-control-center.desktop"
-  install -Dm644 "${srcdir}/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/de.tuxedocomputers.tcc.policy" "${pkgdir}/usr/share/polkit-1/actions/de.tuxedocomputers.tcc.policy"
-  install -Dm644 "${srcdir}/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/com.tuxedocomputers.tccd.conf" "${pkgdir}/usr/share/dbus-1/system.d/com.tuxedocomputers.tccd.conf"
-  install -Dm644 "${srcdir}/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/tccd.service" "${pkgdir}/etc/systemd/system/tccd.service"
-  install -Dm644 "${srcdir}/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/tccd-sleep.service" "${pkgdir}/etc/systemd/system/tccd-sleep.service"
+    install -dm755 "${pkgdir}/usr"
+    cp -av usr/share "${pkgdir}"/usr/
+    cp -av opt "${pkgdir}"
+
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -sfv /opt/tuxedo-control-center/tuxedo-control-center \
+        "${pkgdir}/usr/bin/tuxedo-control-center"
+
+    distpath='/opt/tuxedo-control-center/resources/dist/tuxedo-control-center'
+    install -Dm644 \
+        "${srcdir}${distpath}/data/dist-data/de.tuxedocomputers.tcc.policy" \
+        "${pkgdir}/usr/share/polkit-1/actions/de.tuxedocomputers.tcc.policy"
+    install -Dm644 \
+        "${srcdir}${distpath}/data/dist-data/com.tuxedocomputers.tccd.conf" \
+        "${pkgdir}/usr/share/dbus-1/system.d/com.tuxedocomputers.tccd.conf"
+
+    install -dm755 "${pkgdir}/usr/lib/systemd/system"
+    install -Dm644 \
+        "${srcdir}${distpath}/data/dist-data/tccd.service" \
+        "${pkgdir}/usr/lib/systemd/system/tccd.service"
+    install -Dm644 \
+        "${srcdir}${distpath}/data/dist-data/tccd-sleep.service" \
+        "${pkgdir}/usr/lib/systemd/system/tccd-sleep.service"
 }
 
